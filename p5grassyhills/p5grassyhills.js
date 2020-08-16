@@ -28,11 +28,10 @@ function draw() {
 function drawClouds() {
   loadPixels();
   for (let x = 0; x<width; x++) {
-    for (let y = 0; y<height; y++) {
+    for (let y = 0; y<height/4; y++) {
       let index=4*(x*d+(y*d)*width*d);
-      let n = noise((frameCount/10)+x/100.0, y/100.0);
       let b = lerpColor(clrBlue, orange, map(y, 0, height, 0, 1));
-      let c = lerpColor(lerpColor(white, b, map(y, 0, height/4, 0, 1)), b, n);      
+      let c = lerpColor(lerpColor(white, b, map(y, 0, height/4, 0, 1)), b, noise((frameCount/10)+x/100.0, y/100.0));      
       pixels[index] = red(c);
       pixels[index+1] = green(c);
       pixels[index+2] = blue(c);

@@ -10,7 +10,6 @@ function setup() {
 
 function draw() {
   background(245);
-
   target.update();
   car.seek(target.location);
   car.update();
@@ -34,8 +33,8 @@ class Target {
 
 
   move() {
-    this.velocity.set(p5.Vector.add(this.velocity, this.acceleration));
-    this.location.set(p5.Vector.add(this.location, this.velocity));
+    this.velocity.add(this.acceleration);
+    this.location.add(this.velocity);
     this.acceleration.mult(0);
   }
 
@@ -63,17 +62,13 @@ class Vehicle {
   }
 
   reached(t) {
-    if (p5.Vector.sub(t.location, this.location).mag() < 5) { 
-      return true;
-    } else {
-      return false;
-    }
+    return p5.Vector.sub(t.location, this.location).mag() < 5;
   }
 
 
   display() {
     push();
-    translate(this.location.x, this.location.y);
+    translate(this.location);
     rotate(this.velocity.heading());
     rectMode(CENTER);
     // tires
@@ -96,32 +91,27 @@ class Vehicle {
     triangle(this.w/2, -0.2*this.h, this.w/2+this.w, -0.7*this.h, this.w/2+this.w, 0.3*this.h);
     triangle(this.w/2, 0.2*this.h, this.w/2+this.w, -0.3*this.h, this.w/2+this.w, 0.7*this.h);
     // flashy light siren thingy
-    fill(255, 0, 0, map(this.siren, -1, 1, 0, 255));
+    fill(255, 0, 0, map(sin(frameCount * this.velocity.mag() / 10.0), -1, 1, 0, 255));
     ellipse(0, 0, this.w*0.07, this.w*0.07);
     pop();
   }
 
   move() {
-    this.velocity.set(p5.Vector.add(this.velocity, this.acceleration));
-    this.location.set(p5.Vector.add(this.location, this.velocity));
+    this.velocity.add(this.acceleration);
+    this.location.add(this.velocity);
     this.acceleration.mult(0);
   }
 
   applyForce(f) {
-    this.acceleration.set(p5.Vector.add(this.acceleration, p5.Vector.div(f, this.mass)));
+    this.acceleration.add(p5.Vector.div(f, this.mass));
   }
 
   seek(target) {
-    let desiredVelocity = p5.Vector.sub(target, this.location);
-    desiredVelocity.limit(this.maxSpeed);
-    let steer = p5.Vector.sub(desiredVelocity, this.velocity);
-    steer.limit(this.maxForce);
-    this.applyForce(steer);
+    this.applyForce(p5.Vector.sub(p5.Vector.sub(target, this.location).limit(this.maxSpeed), this.velocity).limit(this.maxForce));
   }
 
   update() {
     this.move();
     this.display();
-    this.siren = sin(frameCount * this.velocity.mag() / 10.0);
   }
 }

@@ -6,11 +6,8 @@ function setup() {
   text("click to make a paintsplat!", 50, 50);
 }
 function draw() {
-  if (mouseIsPressed) {
-    splats.push(new splat(mouseX, mouseY));
-    splats[splats.length-1].populate();
-  }
-  for (var i in splats)splats[i].render();
+  if (mouseIsPressed) splats.push(new splat(mouseX, mouseY));
+  for (var i in splats)if(millis()-splats[i].st<=5000)splats[i].render();
 }
 class splat {
   constructor(_x, _y) {
@@ -19,7 +16,8 @@ class splat {
     this.rays=[];
     this.x=_x;
     this.y=_y;
-    //this.populate(); CHECK THIS
+    this.st=millis();
+    this.populate();
   }
   populate() {
     let r=int(random(0, 255)), g=int(random(0, 255)), b=int(random(0, 255));
@@ -32,7 +30,10 @@ class splat {
   render() {
     for (let i in this.rays)this.rays[i].render();
     for (let i in this.dots)this.dots[i].render();
-    for (let i in this.dribbles)this.dribbles[i].render();
+    for (let i=0;i<this.dribbles.length;i++){
+        if(this.dribbles[i].y>height)this.dribbles.slice(i);
+        else this.dribbles[i].render();
+    }
   }
   numseg(n, f) {
     return int((n*1000000)/f);//make it large and truncate for more randomness

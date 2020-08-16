@@ -139,8 +139,8 @@ class bullet {
   }
 
   render() {
-    this.location.set(p5.Vector.add(this.location,this.velocity));
-    this.velocity.set(p5.Vector.add(this.velocity,this.acceleration));
+    this.location.add(this.velocity);
+    this.velocity.add(this.acceleration);
     this.velocity.limit(10);
     fill(255, 0, 0);
     ellipse(this.location.x, this.location.y, 10, 10);

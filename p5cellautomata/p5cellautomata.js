@@ -24,17 +24,14 @@ class CA {
   constructor() {
     this.ruleset = [Math.round(random(0, 1)), Math.round(random(0, 1)), Math.round(random(0, 1)), Math.round(random(0, 1)), Math.round(random(0, 1)), Math.round(random(0, 1)), Math.round(random(0, 1)), Math.round(random(0, 1))];
     this.cells = [width];
-    for (let i = 0; i<width; i++)this.cells[i]=0;
+    this.cells.map(v=>0);
     this.cells[width/2]=1;
     this.generation=0;
   }
   nextGeneration() {
     this.generation++;
     for (let i = 1; i<width-1; i++) {
-      let left = this.cells[i-1];
-      let middle = this.cells[i];
-      let right = this.cells[i+1];
-      this.cells[i] = this.rules(left, middle, right);
+      this.cells[i] = this.rules(this.cells[i-1], this.cells[i], this.cells[i+1]);
     }
   }
   display() {

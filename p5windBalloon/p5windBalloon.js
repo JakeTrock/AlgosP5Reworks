@@ -7,7 +7,7 @@ function setup() {
   for (let i=0; i<100; i++)balloons.push(new balloon(createVector(random(0, width), random(0, height))));
 }
 function draw() {
-  wind=createVector(0, -1).rotate(map(noise(frameCount/100.0), 0, 1, 0, 4*PI));
+  wind=createVector(0, -1).rotate(map(noise(second()/4), 0, 1, 0, 4*PI));
   background(245);
   for (var b in balloons) {
     balloons[b].applyForce(gravity);
@@ -25,12 +25,12 @@ class balloon {
     this.acceleration=createVector(0, 0);
   }
   applyForce(f) {
-    this.acceleration.set(p5.Vector.add(this.acceleration, f.copy().div(this.mass)));
+    this.acceleration.add(f.copy().div(this.mass));
   }
   update() {
-    this.velocity.set(p5.Vector.add(this.velocity, this.acceleration));
+    this.velocity.add(this.acceleration);
     this.velocity.limit(3);
-    this.location.set(p5.Vector.add(this.location, this.velocity));
+    this.location.add(this.velocity);
     this.acceleration.mult(0);
     fill(255, 0, 0);
     noStroke();

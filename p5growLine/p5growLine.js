@@ -39,13 +39,9 @@ class Vehicle {
   }
 
   seek(target) {
-    let desiredVelocity = p5.Vector.sub(target, this.location);
-    desiredVelocity.limit(this.maxSpeed);
-    let steer = p5.Vector.sub(desiredVelocity, this.velocity);
-    steer.limit(this.maxForce);
-    this.acceleration.set(p5.Vector.add(this.acceleration,steer.copy().div(this.mass)));
-    this.velocity.set(p5.Vector.add(this.velocity,this.acceleration));
-    this.location.set(p5.Vector.add(this.location,this.velocity));
-    this.acceleration.set(p5.Vector.mult(this.acceleration,0));
+    this.acceleration.add(p5.Vector.sub(p5.Vector.sub(target, this.location).limit(this.maxSpeed), this.velocity).limit(this.maxForce).div(this.mass));
+    this.velocity.add(this.acceleration);
+    this.location.add(this.velocity);
+    this.acceleration.mult(0);
   }
 }

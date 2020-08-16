@@ -13,7 +13,7 @@ function draw() {
   text("This is a simulation meant to copy the properties of fluids in the real world.\n Oil, having high viscosity won't stick around too long, slipping over the edge.\n Sludge, however is too slow, and will more often than not seep into the earth below.\n Water is the middleground between the two fluids.\n If any of the three fluids is left to stagnate, it will seep into the earth and rejoin the aquifer below.\n Feel free to grab any of the handles on the mountain and watch as the particles react to the changes", width/20, height/20);
   mouse.set(mouseX, mouseY);
   setPiece.update();
-  if (!setPiece.colliding(mouse.x, mouse.y)) {
+  if (!setPiece.colliding(mouse.x, mouse.y)&&mouse.x>0&&mouse.y>0&&mouse.x<width&&mouse.y<height) {
     if (drops.length>50)drops=drops.slice(1);
     if (frameCount % 6 == 0) drops.push(new Water(mouse));
     if (frameCount % 6 == 1) drops.push(new Sludge(mouse));
@@ -23,9 +23,7 @@ function draw() {
     let gravAcc = createVector(0, 0.2);
     let gravity = gravAcc.copy().mult(drops[p].mass);
     drops[p].applyForce(gravity);
-    if (setPiece.colliding(drops[p].location.x, drops[p].location.y)) {
-      drops[p].velocity.mult(-.7);//allows particles to seep into the ground, like in real life
-    };
+    if (setPiece.colliding(drops[p].location.x, drops[p].location.y)) drops[p].velocity.mult(-.7);
     if (setPiece.colliding(drops[p].location.x-drops[p].diameter/2, drops[p].location.y))drops[p].velocity.add(drops[p].vis, 0);//l/r coll
     if (setPiece.colliding(drops[p].location.x+drops[p].diameter/2, drops[p].location.y))drops[p].velocity.add(-drops[p].vis, 0);
 
@@ -108,13 +106,13 @@ class drop {
   }
 
   move() {
-    this.velocity.set(p5.Vector.add(this.velocity, this.acceleration));
-    this.location.set(p5.Vector.add(this.location, this.velocity));
+    this.velocity.add(this.acceleration);
+    this.location.add(this.velocity);
     this.acceleration.mult(0);
   }
 
   applyForce(f) {
-    this.acceleration.set(p5.Vector.add(this.acceleration, f.copy().div(this.mass)));
+    this.acceleration.add(f.copy().div(this.mass));
   }
 }
 
